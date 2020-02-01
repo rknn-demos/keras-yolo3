@@ -1,0 +1,1 @@
+./data/dog_608x608.jpg

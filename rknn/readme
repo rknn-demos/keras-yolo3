@@ -1,0 +1,58 @@
+#run yolov3 rknn demo
+	#copy yolov3_demo/ to rk3399pro
+	cd yolov3_demo
+	python rknn_resize.py
+	python rknn_transform.py
+	python rknn_transform_tiny.py
+	python rknn_picture.py
+	python rknn_picture_tiny.py
+	python rknn_camera.py
+	python rknn_camera_tiny.py
+
+#train your images
+	#copy train_my_data/ to darknet/
+	cd train_my_data
+	#copy your images to train_images and validate_images
+	git clone https://github.com/tzutalin/labelImg
+	cd labelImg
+	    sudo apt-get install pyqt5-dev-tools
+	    sudo pip3 install -r requirements/requirements-linux-python3.txt
+	    make qt5py3
+	    python3 labelImg.py
+	    #label your images and save labels to train_imageXML and validate_imageXML
+	cd ..
+	python list_image_files.py
+	python trans.py
+	vi voc.names
+	    class_1
+	    class_2
+	    class_3
+
+	vi voc.data
+	    classes = N      # N is your class num
+	    train = /home/XXX/darknet/train_my_data/trainImagePath.txt
+	    valid = /home/XXX/darknet/train_my_data/validateImagePath.txt
+	    names = train_my_data/voc.names
+	    backup = train_my_data/backup
+
+	vi yolov3-tiny-modify.cfg
+	    1. modify classes = N in [yolo] layer
+	    2. modify filters = 3*(N+1+4) ahead [yolo] layer
+	    3. modify max_batches = your-max-train-times
+
+
+	cd ..
+	./darknet partial train_my_data/yolov3-tiny.cfg train_my_data/yolov3-tiny.weights train_my_data/yolov3-tiny.conv.15 15
+	./darknet detector train train_my_data/voc.data train_my_data/yolov3-tiny-modify.cfg train_my_data/yolov3-tiny.conv.15
+	./darknet detector test train_my_data/voc.data train_my_data/yolov3-tiny-modify.cfg train_my_data/backup/yolov3-tiny-modify_900.weights train_my_data/train_images/000937.jpg -thresh 0.1
+
+
+	#copy your .weight file to rk3399pro, and modify rknn_transform_tiny.py to get .rknn file
+	#modify rknn_picture_tiny.py, N is your class num
+	LISTSIZE=85	=>	LISTSIZE=(N+5)
+	NUM_CLS=80	=>	NUM_CLS=N
+	CLASSES{...}	=>	CLASSES{“person”, “dog”, “car”}
+
+
+ 
+

@@ -1,0 +1,7 @@
+./data/dog_416x416.jpg
+./data/eagle_416x416.jpg
+./data/giraffe_416x416.jpg
+./data/horses_416x416.jpg
+./data/kite_416x416.jpg
+./data/person_416x416.jpg
+./data/scream_416x416.jpg
